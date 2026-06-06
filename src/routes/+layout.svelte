@@ -2,13 +2,19 @@
 	import './layout.css';
 	import favicon from '$lib/assets/logo.png';
 	import { getTheme } from '$lib/stores/theme.svelte.js';
+	import { getLocale } from '$lib/stores/i18n.svelte.js';
 
 	let { children } = $props();
 
 	const theme = $derived(getTheme());
+	const locale = $derived(getLocale());
 
 	$effect(() => {
 		document.documentElement.classList.toggle('light', theme === 'light');
+	});
+
+	$effect(() => {
+		document.documentElement.lang = locale;
 	});
 </script>
 

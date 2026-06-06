@@ -8,6 +8,7 @@
 		deleteTask
 	} from '$lib/stores/todo.svelte.js';
 	import { unlockAchievement } from '$lib/stores/gamification.svelte.js';
+	import { getT } from '$lib/stores/i18n.svelte.js';
 	import Plus from '@lucide/svelte/icons/plus';
 	import X from '@lucide/svelte/icons/x';
 	import Check from '@lucide/svelte/icons/check';
@@ -17,14 +18,15 @@
 	const todo = $derived(getTasksByStatus('todo'));
 	const doing = $derived(getTasksByStatus('doing'));
 	const done = $derived(getTasksByStatus('done'));
+	const t = $derived(getT());
 
 	const PAGE_SIZE = 5;
 
-	const columns: { status: TaskStatus; title: string; color: string }[] = [
-		{ status: 'todo', title: 'To Do', color: 'var(--color-kanban-todo)' },
-		{ status: 'doing', title: 'In Progress', color: 'var(--color-kanban-doing)' },
-		{ status: 'done', title: 'Done', color: 'var(--color-kanban-done)' }
-	];
+	const columns = $derived([
+		{ status: 'todo' as const, title: t.kanban.todo, color: 'var(--color-kanban-todo)' },
+		{ status: 'doing' as const, title: t.kanban.inProgress, color: 'var(--color-kanban-doing)' },
+		{ status: 'done' as const, title: t.kanban.done, color: 'var(--color-kanban-done)' }
+	]);
 
 	function getColumnTasks(status: TaskStatus) {
 		switch (status) {
@@ -123,7 +125,7 @@
 
 <div class="mx-auto max-w-6xl">
 	<div class="mb-6">
-		<h1 class="text-2xl font-bold text-text-primary">Kanban</h1>
+		<h1 class="text-2xl font-bold text-text-primary">{t.kanban.title}</h1>
 	</div>
 
 	<div class="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -150,7 +152,7 @@
 							newTitle = '';
 						}}
 						class="p-1 text-text-muted transition-colors hover:bg-surface-3 hover:text-text-primary"
-						aria-label="Add task to {col.title}"
+						aria-label="{t.kanban.addTask} {col.title}"
 					>
 						<Plus class="h-3.5 w-3.5" />
 					</button>
@@ -160,7 +162,7 @@
 					<div class="mb-2 border border-accent/20 bg-surface-3 px-3 py-2.5">
 						<input
 							bind:value={newTitle}
-							placeholder="Task title..."
+							placeholder={t.kanban.taskTitle}
 							class="mb-2 w-full border border-surface-3 bg-surface-2 px-2 py-1.5 text-xs text-text-primary outline-none"
 							onkeydown={(e) => {
 								if (e.key === 'Enter') handleAdd(col.status);
@@ -173,16 +175,16 @@
 								bind:value={newPriority}
 								class="flex-1 border border-surface-3 bg-surface-2 px-2 py-1 text-[11px] text-text-primary outline-none"
 							>
-								<option value="low">Low</option>
-								<option value="medium">Med</option>
-								<option value="high">High</option>
+								<option value="low">{t.kanban.low}</option>
+								<option value="medium">{t.kanban.med}</option>
+								<option value="high">{t.kanban.high}</option>
 							</select>
 							<button
 								class:cursor-pointer={true}
 								onclick={() => handleAdd(col.status)}
 								class="bg-accent px-2.5 py-1 text-[11px] font-medium text-white"
 							>
-								Add
+								{t.kanban.add}
 							</button>
 						</div>
 					</div>
@@ -191,7 +193,7 @@
 				<div class="flex flex-1 flex-col gap-1.5">
 					{#if getColumnTasks(col.status).length === 0}
 						<div class="flex flex-1 items-center justify-center py-8 text-xs text-text-muted">
-							Drop tasks here
+							{t.kanban.dropHere}
 						</div>
 					{:else}
 						{#each visibleTasks(col.status) as task (task.id)}
@@ -210,7 +212,7 @@
 												class:cursor-pointer={true}
 												onclick={() => toggleTask(task.id)}
 												class="p-0.5 text-text-muted transition-colors hover:text-success"
-												aria-label="Complete task"
+												aria-label={t.kanban.completeTask}
 											>
 												<Check class="h-3 w-3" />
 											</button>
@@ -219,7 +221,7 @@
 											class:cursor-pointer={true}
 											onclick={() => deleteTask(task.id)}
 											class="p-0.5 text-text-muted transition-colors hover:text-danger"
-											aria-label="Delete task"
+											aria-label={t.kanban.deleteTask}
 										>
 											<X class="h-3 w-3" />
 										</button>
@@ -247,7 +249,7 @@
 									class="flex items-center gap-0.5 px-2 py-1 text-[11px] font-medium text-text-muted transition-colors hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-40"
 								>
 									<ChevronLeft class="h-3 w-3" />
-									Prev
+									{t.kanban.prev}
 								</button>
 								<span class="text-[11px] text-text-muted">
 									{pageFor(col.status)} / {totalPages(col.status)}
@@ -258,7 +260,7 @@
 									disabled={pageFor(col.status) >= totalPages(col.status)}
 									class="flex items-center gap-0.5 px-2 py-1 text-[11px] font-medium text-text-muted transition-colors hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-40"
 								>
-									Next
+									{t.kanban.next}
 									<ChevronRight class="h-3 w-3" />
 								</button>
 							</div>

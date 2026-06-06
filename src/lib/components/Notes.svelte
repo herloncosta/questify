@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getNotes, addNote, updateNote, deleteNote } from '$lib/stores/notes.svelte.js';
 	import type { Note } from '$lib/types';
+	import { getT, getLocale } from '$lib/stores/i18n.svelte.js';
 	import Plus from '@lucide/svelte/icons/plus';
 	import X from '@lucide/svelte/icons/x';
 	import FileText from '@lucide/svelte/icons/file-text';
@@ -13,6 +14,8 @@
 	import { cubicInOut } from 'svelte/easing';
 
 	const notes = $derived(getNotes());
+	const t = $derived(getT());
+	const locale = $derived(getLocale());
 
 	let showAddPopup = $state(false);
 	let popupTitle = $state('');
@@ -78,8 +81,8 @@
 <div class="mx-auto max-w-6xl">
 	<div class="mb-6 flex items-center justify-between">
 		<div>
-			<h1 class="text-2xl font-bold text-text-primary">Notes</h1>
-			<p class="mt-0.5 text-sm text-text-secondary">{notes.length} notes</p>
+			<h1 class="text-2xl font-bold text-text-primary">{t.notes.title}</h1>
+			<p class="mt-0.5 text-sm text-text-secondary">{notes.length} {t.notes.count}</p>
 		</div>
 		<button
 			class:cursor-pointer={true}
@@ -87,7 +90,7 @@
 			class="flex items-center gap-1.5 bg-accent px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-hover"
 		>
 			<Plus class="h-3.5 w-3.5" />
-			New Note
+			{t.notes.newNote}
 		</button>
 	</div>
 
@@ -108,7 +111,7 @@
 				tabindex="-1"
 			>
 				<div class="mb-4 flex items-center justify-between">
-					<h2 class="text-base font-semibold text-text-primary">New Note</h2>
+					<h2 class="text-base font-semibold text-text-primary">{t.notes.newNote}</h2>
 					<button
 						class:cursor-pointer={true}
 						onclick={() => (showAddPopup = false)}
@@ -119,13 +122,13 @@
 				</div>
 				<input
 					bind:value={popupTitle}
-					placeholder="Note title..."
+					placeholder={t.notes.noteTitle}
 					class="mb-3 w-full border border-surface-3 bg-surface-3 px-3 py-2 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-accent"
 					onkeydown={(e) => e.key === 'Enter' && handleAdd()}
 				/>
 				<textarea
 					bind:value={popupContent}
-					placeholder="Write your note..."
+					placeholder={t.notes.writeNote}
 					class="mb-4 w-full resize-none border border-surface-3 bg-surface-3 px-3 py-2 text-xs text-text-secondary outline-none"
 					rows="8"
 				></textarea>
@@ -135,7 +138,7 @@
 						onclick={() => (showAddPopup = false)}
 						class="border border-surface-3 bg-surface-2 px-3.5 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3"
 					>
-						Cancel
+						{t.notes.cancel}
 					</button>
 					<button
 						class:cursor-pointer={true}
@@ -143,7 +146,7 @@
 						disabled={!popupTitle.trim()}
 						class="bg-accent px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
 					>
-						Create
+						{t.notes.create}
 					</button>
 				</div>
 			</div>
@@ -180,7 +183,7 @@
 					{#if notePopupContent}
 						<p class="mb-6 text-sm whitespace-pre-wrap text-text-secondary">{notePopupContent}</p>
 					{:else}
-						<p class="mb-6 text-sm text-text-muted italic">No content</p>
+						<p class="mb-6 text-sm text-text-muted italic">{t.notes.noContent}</p>
 					{/if}
 					<div class="flex justify-end gap-2">
 						<button
@@ -189,7 +192,7 @@
 							class="flex items-center gap-1 border border-surface-3 bg-surface-2 px-3.5 py-2 text-xs font-medium text-text-muted transition-colors hover:border-danger hover:text-danger"
 						>
 							<Trash2 class="h-3.5 w-3.5" />
-							Delete
+							{t.notes.delete}
 						</button>
 						<button
 							class:cursor-pointer={true}
@@ -197,12 +200,12 @@
 							class="flex items-center gap-1 bg-accent px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-hover"
 						>
 							<Edit3 class="h-3.5 w-3.5" />
-							Edit
+							{t.notes.edit}
 						</button>
 					</div>
 				{:else}
 					<div class="mb-4 flex items-center justify-between">
-						<h2 class="text-base font-semibold text-text-primary">Edit Note</h2>
+						<h2 class="text-base font-semibold text-text-primary">{t.notes.editNote}</h2>
 						<button
 							class:cursor-pointer={true}
 							onclick={closeNotePopup}
@@ -213,12 +216,12 @@
 					</div>
 					<input
 						bind:value={notePopupTitle}
-						placeholder="Note title..."
+						placeholder={t.notes.noteTitle}
 						class="mb-3 w-full border border-surface-3 bg-surface-3 px-3 py-2 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-accent"
 					/>
 					<textarea
 						bind:value={notePopupContent}
-						placeholder="Write your note..."
+						placeholder={t.notes.writeNote}
 						class="mb-4 w-full resize-none border border-surface-3 bg-surface-3 px-3 py-2 text-xs text-text-secondary outline-none"
 						rows="8"
 					></textarea>
@@ -228,7 +231,7 @@
 							onclick={closeNotePopup}
 							class="border border-surface-3 bg-surface-2 px-3.5 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3"
 						>
-							Cancel
+							{t.notes.cancel}
 						</button>
 						<button
 							class:cursor-pointer={true}
@@ -237,7 +240,7 @@
 							class="flex items-center gap-1 bg-accent px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							<Save class="h-3.5 w-3.5" />
-							Save
+							{t.notes.save}
 						</button>
 					</div>
 				{/if}
@@ -248,7 +251,7 @@
 	{#if notes.length === 0}
 		<div class="flex flex-col items-center py-12 text-text-muted">
 			<FileText class="mb-2 h-8 w-8" />
-			<p class="text-sm">No notes yet.</p>
+			<p class="text-sm">{t.notes.noNotes}</p>
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -268,7 +271,7 @@
 						<p class="mt-1 line-clamp-4 text-xs text-text-muted">{note.content}</p>
 					{/if}
 					<p class="mt-auto pt-2 text-[10px] text-text-muted/60">
-						{new Date(note.updatedAt).toLocaleDateString()}
+						{new Date(note.updatedAt).toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US')}
 					</p>
 				</button>
 			{/each}
@@ -283,7 +286,7 @@
 					class="flex items-center gap-0.5 border border-surface-3 bg-surface-2 px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3 disabled:cursor-not-allowed disabled:opacity-40"
 				>
 					<ChevronLeft class="h-3 w-3" />
-					Prev
+					{t.notes.prev}
 				</button>
 				{#each Array.from({ length: totalPages }, (_, i) => i + 1) as p (p)}
 					<button
@@ -303,7 +306,7 @@
 					disabled={page >= totalPages}
 					class="flex items-center gap-0.5 border border-surface-3 bg-surface-2 px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3 disabled:cursor-not-allowed disabled:opacity-40"
 				>
-					Next
+					{t.notes.next}
 					<ChevronRight class="h-3 w-3" />
 				</button>
 			</div>

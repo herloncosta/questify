@@ -9,6 +9,7 @@
 		isLoading
 	} from '$lib/stores/todo.svelte.js';
 	import { unlockAchievement } from '$lib/stores/gamification.svelte.js';
+	import { getT } from '$lib/stores/i18n.svelte.js';
 	import type { Task } from '$lib/types';
 	import Plus from '@lucide/svelte/icons/plus';
 	import X from '@lucide/svelte/icons/x';
@@ -23,6 +24,7 @@
 
 	const tasks = $derived(getTasks());
 	const loading = $derived(isLoading());
+	const t = $derived(getT());
 	let showAddPopup = $state(false);
 	let newTitle = $state('');
 	let newPriority = $state<Priority>('medium');
@@ -129,9 +131,11 @@
 
 <div class="mx-auto max-w-3xl">
 	<div class="mb-6">
-		<h1 class="text-2xl font-bold text-text-primary">Tasks</h1>
+		<h1 class="text-2xl font-bold text-text-primary">{t.todo.title}</h1>
 		<p class="mt-0.5 text-sm text-text-secondary">
-			{activeCount} active &middot; {completedCount} completed
+			{activeCount}
+			{t.todo.active} &middot; {completedCount}
+			{t.todo.completed}
 		</p>
 	</div>
 
@@ -144,7 +148,7 @@
 					? 'bg-accent/10 text-accent'
 					: 'bg-surface-3 text-text-muted hover:text-text-primary'}"
 			>
-				All ({tasks.length})
+				{t.todo.all} ({tasks.length})
 			</button>
 			<button
 				class:cursor-pointer={true}
@@ -153,7 +157,7 @@
 					? 'bg-accent/10 text-accent'
 					: 'bg-surface-3 text-text-muted hover:text-text-primary'}"
 			>
-				Active ({activeCount})
+				{t.todo.activeFilter} ({activeCount})
 			</button>
 			<button
 				class:cursor-pointer={true}
@@ -162,7 +166,7 @@
 					? 'bg-accent/10 text-accent'
 					: 'bg-surface-3 text-text-muted hover:text-text-primary'}"
 			>
-				Completed ({completedCount})
+				{t.todo.completedFilter} ({completedCount})
 			</button>
 		</div>
 		<button
@@ -171,7 +175,7 @@
 			class="flex items-center gap-1.5 bg-accent px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-hover"
 		>
 			<Plus class="h-3.5 w-3.5" />
-			New Task
+			{t.todo.newTask}
 		</button>
 	</div>
 
@@ -192,7 +196,7 @@
 				tabindex="-1"
 			>
 				<div class="mb-4 flex items-center justify-between">
-					<h2 class="text-base font-semibold text-text-primary">New Task</h2>
+					<h2 class="text-base font-semibold text-text-primary">{t.todo.newTask}</h2>
 					<button
 						class:cursor-pointer={true}
 						onclick={() => (showAddPopup = false)}
@@ -203,7 +207,7 @@
 				</div>
 				<input
 					bind:value={newTitle}
-					placeholder="Task title..."
+					placeholder={t.todo.taskTitle}
 					class="mb-3 w-full border border-surface-3 bg-surface-3 px-3 py-2 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-accent"
 					onkeydown={(e) => e.key === 'Enter' && handleAdd()}
 				/>
@@ -212,9 +216,9 @@
 					bind:value={newPriority}
 					class="mb-4 w-full border border-surface-3 bg-surface-3 px-3 py-2 text-xs text-text-primary outline-none focus:border-accent"
 				>
-					<option value="low">Low</option>
-					<option value="medium">Medium</option>
-					<option value="high">High</option>
+					<option value="low">{t.todo.low}</option>
+					<option value="medium">{t.todo.medium}</option>
+					<option value="high">{t.todo.high}</option>
 				</select>
 				<div class="flex justify-end gap-2">
 					<button
@@ -222,7 +226,7 @@
 						onclick={() => (showAddPopup = false)}
 						class="border border-surface-3 bg-surface-2 px-3.5 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3"
 					>
-						Cancel
+						{t.todo.cancel}
 					</button>
 					<button
 						class:cursor-pointer={true}
@@ -230,7 +234,7 @@
 						disabled={!newTitle.trim()}
 						class="bg-accent px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
 					>
-						Create
+						{t.todo.create}
 					</button>
 				</div>
 			</div>
@@ -280,8 +284,8 @@
 						</button>
 						<span class="text-sm text-text-secondary">
 							{taskPopupId != null && tasks.find((t) => t.id === taskPopupId)?.completed
-								? 'Completed'
-								: 'Active'}
+								? t.todo.statusCompleted
+								: t.todo.statusActive}
 						</span>
 						<button
 							class:cursor-pointer={true}
@@ -303,7 +307,7 @@
 							{taskPopupDescription}
 						</p>
 					{:else}
-						<p class="mb-6 text-sm text-text-muted italic">No description</p>
+						<p class="mb-6 text-sm text-text-muted italic">{t.todo.noDescription}</p>
 					{/if}
 
 					<div class="flex justify-end gap-2">
@@ -313,7 +317,7 @@
 							class="flex items-center gap-1 border border-surface-3 bg-surface-2 px-3.5 py-2 text-xs font-medium text-text-muted transition-colors hover:border-danger hover:text-danger"
 						>
 							<Trash2 class="h-3.5 w-3.5" />
-							Delete
+							{t.todo.delete}
 						</button>
 						<button
 							class:cursor-pointer={true}
@@ -321,12 +325,12 @@
 							class="flex items-center gap-1 bg-accent px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-hover"
 						>
 							<Edit3 class="h-3.5 w-3.5" />
-							Edit
+							{t.todo.edit}
 						</button>
 					</div>
 				{:else}
 					<div class="mb-4 flex items-center justify-between">
-						<h2 class="text-base font-semibold text-text-primary">Edit Task</h2>
+						<h2 class="text-base font-semibold text-text-primary">{t.todo.editTask}</h2>
 						<button
 							class:cursor-pointer={true}
 							onclick={closeTaskPopup}
@@ -337,12 +341,12 @@
 					</div>
 					<input
 						bind:value={taskPopupTitle}
-						placeholder="Task title..."
+						placeholder={t.todo.taskTitle}
 						class="mb-3 w-full border border-surface-3 bg-surface-3 px-3 py-2 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-accent"
 					/>
 					<textarea
 						bind:value={taskPopupDescription}
-						placeholder="Description..."
+						placeholder={t.todo.description}
 						class="mb-3 w-full resize-none border border-surface-3 bg-surface-3 px-3 py-2 text-xs text-text-secondary outline-none"
 						rows="4"
 					></textarea>
@@ -351,9 +355,9 @@
 						bind:value={taskPopupPriority}
 						class="mb-4 w-full border border-surface-3 bg-surface-3 px-3 py-2 text-xs text-text-primary outline-none focus:border-accent"
 					>
-						<option value="low">Low</option>
-						<option value="medium">Medium</option>
-						<option value="high">High</option>
+						<option value="low">{t.todo.low}</option>
+						<option value="medium">{t.todo.medium}</option>
+						<option value="high">{t.todo.high}</option>
 					</select>
 					<div class="flex justify-end gap-2">
 						<button
@@ -361,7 +365,7 @@
 							onclick={closeTaskPopup}
 							class="border border-surface-3 bg-surface-2 px-3.5 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3"
 						>
-							Cancel
+							{t.todo.cancel}
 						</button>
 						<button
 							class:cursor-pointer={true}
@@ -370,7 +374,7 @@
 							class="flex items-center gap-1 bg-accent px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							<Save class="h-3.5 w-3.5" />
-							Save
+							{t.todo.save}
 						</button>
 					</div>
 				{/if}
@@ -379,11 +383,11 @@
 	{/if}
 
 	{#if loading}
-		<div class="py-12 text-center text-sm text-text-muted">Loading tasks...</div>
+		<div class="py-12 text-center text-sm text-text-muted">{t.todo.loading}</div>
 	{:else if filtered.length === 0}
 		<div class="flex flex-col items-center py-12 text-text-muted">
 			<ListTodo class="mb-2 h-8 w-8" />
-			<p class="text-sm">No tasks found. Add one to get started.</p>
+			<p class="text-sm">{t.todo.noTasksFound}</p>
 		</div>
 	{:else}
 		<div class="space-y-1">
@@ -422,7 +426,7 @@
 					disabled={page <= 1}
 					class="border border-surface-3 bg-surface-2 px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3 disabled:cursor-not-allowed disabled:opacity-40"
 				>
-					Prev
+					{t.todo.prev}
 				</button>
 				{#each pages as p (p)}
 					<button
@@ -442,7 +446,7 @@
 					disabled={page >= totalPages}
 					class="border border-surface-3 bg-surface-2 px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3 disabled:cursor-not-allowed disabled:opacity-40"
 				>
-					Next
+					{t.todo.next}
 				</button>
 			</div>
 		{/if}

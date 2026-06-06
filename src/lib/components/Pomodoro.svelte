@@ -20,12 +20,14 @@
 	import Coffee from '@lucide/svelte/icons/coffee';
 	import Moon from '@lucide/svelte/icons/moon';
 	import X from '@lucide/svelte/icons/x';
+	import { getT } from '$lib/stores/i18n.svelte.js';
 
 	const isRunning = $derived(getIsRunning());
 	const timeLeft = $derived(getTimeLeft());
 	const currentType: PomodoroType = $derived(getCurrentType());
 	const sessionCount = $derived(getSessionCount());
 	const config = $derived(getConfig());
+	const t = $derived(getT());
 
 	let showConfig = $state(false);
 	let configForm = $state<PomodoroConfig>({ ...getConfig() });
@@ -44,11 +46,17 @@
 	const circumference = 2 * Math.PI * 90;
 	const strokeDashoffset = $derived(circumference - (progress / 100) * circumference);
 
-	const typeInfo: Record<PomodoroType, { label: string; color: string }> = {
-		work: { label: 'Focus', color: '#818cf8' },
-		short_break: { label: 'Short Break', color: '#4ade80' },
-		long_break: { label: 'Long Break', color: '#60a5fa' }
+	const typeInfo: Record<PomodoroType, { color: string }> = {
+		work: { color: '#818cf8' },
+		short_break: { color: '#4ade80' },
+		long_break: { color: '#60a5fa' }
 	};
+
+	const typeLabels = $derived({
+		work: t.pomodoro.focus,
+		short_break: t.pomodoro.shortBreak,
+		long_break: t.pomodoro.longBreak
+	});
 
 	function toggleConfig() {
 		showConfig = !showConfig;
@@ -63,8 +71,8 @@
 
 <div class="mx-auto max-w-md">
 	<div class="mb-6 text-center">
-		<h1 class="text-2xl font-bold text-text-primary">Pomodoro</h1>
-		<p class="mt-0.5 text-sm text-text-secondary">{sessionCount} sessions completed</p>
+		<h1 class="text-2xl font-bold text-text-primary">{t.pomodoro.title}</h1>
+		<p class="mt-0.5 text-sm text-text-secondary">{sessionCount} {t.pomodoro.sessionsCompleted}</p>
 	</div>
 
 	<div class="mb-6 flex justify-center gap-1.5">
@@ -86,7 +94,7 @@
 				{:else}
 					<Moon class="h-3.5 w-3.5" />
 				{/if}
-				{info.label}
+				{typeLabels[type as PomodoroType]}
 			</button>
 		{/each}
 	</div>
@@ -121,7 +129,7 @@
 				{:else}
 					<Moon class="h-3.5 w-3.5" />
 				{/if}
-				{typeInfo[currentType].label}
+				{typeLabels[currentType]}
 			</p>
 		</div>
 	</div>
@@ -134,7 +142,7 @@
 				class="flex items-center gap-1.5 border border-warning/30 bg-warning/10 px-6 py-2 text-xs font-semibold text-warning transition-colors hover:bg-warning/20"
 			>
 				<Pause class="h-3.5 w-3.5" />
-				Pause
+				{t.pomodoro.pause}
 			</button>
 		{:else}
 			<button
@@ -143,7 +151,7 @@
 				class="flex items-center gap-1.5 bg-accent px-6 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-hover"
 			>
 				<Play class="h-3.5 w-3.5" />
-				Start
+				{t.pomodoro.start}
 			</button>
 		{/if}
 
@@ -154,7 +162,7 @@
 			class="    flex items-center gap-1.5 border border-surface-3 bg-surface-2 px-4 py-2 text-xs font-semibold text-text-muted transition-colors hover:bg-surface-3 disabled:cursor-not-allowed"
 		>
 			<RotateCcw class="h-3.5 w-3.5" />
-			Reset
+			{t.pomodoro.reset}
 		</button>
 		<button
 			class:cursor-pointer={true}
@@ -168,7 +176,7 @@
 	{#if showConfig}
 		<div class="mt-6 border border-surface-3 bg-surface-2 px-4 py-4">
 			<div class="mb-3 flex items-center justify-between">
-				<h3 class="text-xs font-semibold text-text-primary">Settings</h3>
+				<h3 class="text-xs font-semibold text-text-primary">{t.pomodoro.settings}</h3>
 				<button
 					class:cursor-pointer={true}
 					onclick={toggleConfig}
@@ -179,7 +187,9 @@
 			</div>
 			<div class="grid grid-cols-2 gap-3">
 				<div>
-					<label for="pomo-work" class="text-xs font-medium text-text-muted">Focus (min)</label>
+					<label for="pomo-work" class="text-xs font-medium text-text-muted"
+						>{t.pomodoro.focusMin}</label
+					>
 					<input
 						id="pomo-work"
 						type="number"
@@ -191,7 +201,7 @@
 				</div>
 				<div>
 					<label for="pomo-short" class="text-xs font-medium text-text-muted"
-						>Short Break (min)</label
+						>{t.pomodoro.shortBreakMin}</label
 					>
 					<input
 						id="pomo-short"
@@ -203,7 +213,8 @@
 					/>
 				</div>
 				<div>
-					<label for="pomo-long" class="text-xs font-medium text-text-muted">Long Break (min)</label
+					<label for="pomo-long" class="text-xs font-medium text-text-muted"
+						>{t.pomodoro.longBreakMin}</label
 					>
 					<input
 						id="pomo-long"
@@ -216,7 +227,7 @@
 				</div>
 				<div>
 					<label for="pomo-interval" class="text-xs font-medium text-text-muted"
-						>Sessions before long break</label
+						>{t.pomodoro.sessionsBeforeLongBreak}</label
 					>
 					<input
 						id="pomo-interval"
@@ -234,14 +245,14 @@
 					onclick={() => (showConfig = false)}
 					class="border border-surface-3 bg-surface-2 px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3"
 				>
-					Cancel
+					{t.pomodoro.cancel}
 				</button>
 				<button
 					class:cursor-pointer={true}
 					onclick={saveConfigForm}
 					class="bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-hover"
 				>
-					Save
+					{t.pomodoro.save}
 				</button>
 			</div>
 		</div>

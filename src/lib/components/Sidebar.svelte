@@ -10,9 +10,11 @@
 	import Award from '@lucide/svelte/icons/award';
 	import Sun from '@lucide/svelte/icons/sun';
 	import Moon from '@lucide/svelte/icons/moon';
+	import Languages from '@lucide/svelte/icons/languages';
 	import PanelLeftClose from '@lucide/svelte/icons/panel-left-close';
 	import PanelLeftOpen from '@lucide/svelte/icons/panel-left-open';
 	import { getTheme, toggleTheme } from '$lib/stores/theme.svelte.js';
+	import { getLocale, toggleLocale, getT } from '$lib/stores/i18n.svelte.js';
 	import logo from '$lib/assets/logo.png';
 
 	let {
@@ -37,14 +39,16 @@
 	const stats = $derived(getStats());
 	const progress = $derived(getXpProgress());
 	const theme = $derived(getTheme());
+	const locale = $derived(getLocale());
+	const t = $derived(getT());
 
-	const nav: { id: View; label: string; icon: typeof LayoutDashboard }[] = [
-		{ id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-		{ id: 'todo', label: 'Tasks', icon: ListTodo },
-		{ id: 'pomodoro', label: 'Pomodoro', icon: Timer },
-		{ id: 'kanban', label: 'Kanban', icon: Columns3 },
-		{ id: 'notes', label: 'Notes', icon: FileText }
-	];
+	const nav = $derived([
+		{ id: 'dashboard' as const, label: t.nav.dashboard, icon: LayoutDashboard },
+		{ id: 'todo' as const, label: t.nav.todo, icon: ListTodo },
+		{ id: 'pomodoro' as const, label: t.nav.pomodoro, icon: Timer },
+		{ id: 'kanban' as const, label: t.nav.kanban, icon: Columns3 },
+		{ id: 'notes' as const, label: t.nav.notes, icon: FileText }
+	]);
 
 	function handleNav(id: View) {
 		current = id;
@@ -84,7 +88,7 @@
 		<div class="border-b border-surface-3 px-4 py-3">
 			<div class="mb-1.5 flex items-center gap-2">
 				<Award class="h-3.5 w-3.5 text-accent" />
-				<span class="text-xs font-semibold text-accent">Level {stats.level}</span>
+				<span class="text-xs font-semibold text-accent">{t.sidebar.level} {stats.level}</span>
 			</div>
 			<div class="mb-1 h-1.5 overflow-hidden bg-surface-3">
 				<div
@@ -93,15 +97,16 @@
 				></div>
 			</div>
 			<div class="flex items-center justify-between text-[11px] text-text-muted">
-				<span>{stats.xp} XP</span>
+				<span>{stats.xp} {t.sidebar.xp}</span>
 				<span>{progress.current}/{progress.max}</span>
 			</div>
 			<div class="mt-2 flex items-center gap-3 text-[11px] text-text-secondary">
 				<span class="flex items-center gap-1">
 					<Flame class="h-3 w-3 text-warning" />
-					{stats.streak} day streak
+					{stats.streak}
+					{t.sidebar.dayStreak}
 				</span>
-				<span>{stats.achievements.length} achievements</span>
+				<span>{stats.achievements.length} {t.sidebar.achievements}</span>
 			</div>
 		</div>
 	{/if}
@@ -128,13 +133,14 @@
 	</nav>
 
 	<div class="space-y-1 border-t border-surface-3 px-2 py-2">
+		<!-- THEME TOGGLE BUTTON -->
 		<button
 			class:cursor-pointer={true}
 			onclick={toggleTheme}
 			class="flex w-full items-center gap-2.5 px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3 hover:text-text-primary {collapsed
 				? 'justify-center'
 				: ''}"
-			title={collapsed ? (theme === 'dark' ? 'Dark mode' : 'Light mode') : undefined}
+			title={collapsed ? (theme === 'dark' ? t.sidebar.darkMode : t.sidebar.lightMode) : undefined}
 		>
 			{#if theme === 'dark'}
 				<Moon class="h-3.5 w-3.5 shrink-0" />
@@ -142,22 +148,39 @@
 				<Sun class="h-3.5 w-3.5 shrink-0" />
 			{/if}
 			{#if !collapsed}
-				{theme === 'dark' ? 'Dark' : 'Light'} mode
+				{theme === 'dark' ? t.sidebar.dark : t.sidebar.light} mode
 			{/if}
 		</button>
+		<!-- LANGUAGE TOGGLE BUTTON -->
+		<button
+			class:cursor-pointer={true}
+			onclick={() => {
+				toggleLocale();
+			}}
+			class="flex w-full items-center gap-2.5 px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3 hover:text-text-primary {collapsed
+				? 'justify-center'
+				: ''}"
+			title={collapsed ? (locale === 'pt' ? t.sidebar.portuguese : t.sidebar.english) : undefined}
+		>
+			<Languages class="h-3.5 w-3.5 shrink-0" />
+			{#if !collapsed}
+				{locale === 'en' ? t.sidebar.english : t.sidebar.portuguese}
+			{/if}
+		</button>
+		<!-- COLLAPSE/EXPAND TOGGLE -->
 		<button
 			class:cursor-pointer={true}
 			onclick={() => (collapsed = !collapsed)}
 			class="hidden w-full items-center gap-2.5 px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-3 hover:text-text-primary md:flex {collapsed
 				? 'justify-center'
 				: ''}"
-			title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+			title={collapsed ? t.sidebar.expand : t.sidebar.collapseSidebar}
 		>
 			{#if collapsed}
 				<PanelLeftOpen class="h-3.5 w-3.5 shrink-0" />
 			{:else}
 				<PanelLeftClose class="h-3.5 w-3.5 shrink-0" />
-				Collapse
+				{t.sidebar.collapse}
 			{/if}
 		</button>
 	</div>

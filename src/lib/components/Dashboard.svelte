@@ -7,6 +7,7 @@
 		getCurrentType,
 		getConfig
 	} from '$lib/stores/pomodoro.svelte.js';
+	import { getT } from '$lib/stores/i18n.svelte.js';
 	import ListTodo from '@lucide/svelte/icons/list-todo';
 	import Award from '@lucide/svelte/icons/award';
 	import Flame from '@lucide/svelte/icons/flame';
@@ -19,6 +20,7 @@
 	const stats = $derived(getStats());
 	const progress = $derived(getXpProgress());
 	const achievements = $derived(getAchievements());
+	const t = $derived(getT());
 
 	const totalTasks = $derived(tasks.length);
 	const completed = $derived(tasks.filter((t) => t.completed).length);
@@ -46,10 +48,10 @@
 	);
 	const pomodoroLabel = $derived(
 		pomodoroType === 'work'
-			? 'Focus'
+			? t.pomodoro.focus
 			: pomodoroType === 'short_break'
-				? 'Short Break'
-				: 'Long Break'
+				? t.pomodoro.shortBreak
+				: t.pomodoro.longBreak
 	);
 	const pomodoroMinutes = $derived(Math.floor(pomodoroTimeLeft / 60));
 	const pomodoroSeconds = $derived(pomodoroTimeLeft % 60);
@@ -62,14 +64,15 @@
 
 <div class="mx-auto max-w-4xl">
 	<div class="mb-8">
-		<h1 class="text-2xl font-bold text-text-primary">Dashboard</h1>
-		<p class="mt-0.5 text-sm text-text-secondary">Overview of your progress and tasks.</p>
+		<h1 class="text-2xl font-bold text-text-primary">{t.dashboard.title}</h1>
+		<p class="mt-0.5 text-sm text-text-secondary">{t.dashboard.subtitle}</p>
 	</div>
 
 	<div class="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
 		<div class="border border-surface-3 bg-surface-2 px-4 py-3.5">
 			<div class="mb-2 flex items-center justify-between">
-				<span class="text-xs font-medium tracking-wider text-text-muted uppercase">Total Tasks</span
+				<span class="text-xs font-medium tracking-wider text-text-muted uppercase"
+					>{t.dashboard.totalTasks}</span
 				>
 				<ListTodo class="h-4 w-4 text-text-muted" />
 			</div>
@@ -80,12 +83,17 @@
 					style="width: {completionRate}%"
 				></div>
 			</div>
-			<p class="mt-0.5 text-xs text-text-muted">{completed} completed ({completionRate}%)</p>
+			<p class="mt-0.5 text-xs text-text-muted">
+				{completed}
+				{t.dashboard.completed} ({completionRate}%)
+			</p>
 		</div>
 
 		<div class="border border-surface-3 bg-surface-2 px-4 py-3.5">
 			<div class="mb-2 flex items-center justify-between">
-				<span class="text-xs font-medium tracking-wider text-text-muted uppercase">Level</span>
+				<span class="text-xs font-medium tracking-wider text-text-muted uppercase"
+					>{t.dashboard.level}</span
+				>
 				<Award class="h-4 w-4 text-accent" />
 			</div>
 			<p class="text-xl font-bold text-accent">{stats.level}</p>
@@ -100,24 +108,31 @@
 
 		<div class="border border-surface-3 bg-surface-2 px-4 py-3.5">
 			<div class="mb-2 flex items-center justify-between">
-				<span class="text-xs font-medium tracking-wider text-text-muted uppercase">Streak</span>
+				<span class="text-xs font-medium tracking-wider text-text-muted uppercase"
+					>{t.dashboard.streak}</span
+				>
 				<Flame class="h-4 w-4 text-warning" />
 			</div>
-			<p class="text-xl font-bold text-warning">{stats.streak} days</p>
+			<p class="text-xl font-bold text-warning">{stats.streak} {t.dashboard.days}</p>
 			<p class="mt-0.5 text-xs text-text-muted">
-				{stats.streak >= 3 ? `${stats.streak * 10} XP daily bonus` : 'Keep going!'}
+				{stats.streak >= 3
+					? `${stats.streak * 10} ${t.dashboard.xpDailyBonus}`
+					: t.dashboard.keepGoing}
 			</p>
 		</div>
 
 		<div class="border border-surface-3 bg-surface-2 px-4 py-3.5">
 			<div class="mb-2 flex items-center justify-between">
-				<span class="text-xs font-medium tracking-wider text-text-muted uppercase">Focus Time</span>
+				<span class="text-xs font-medium tracking-wider text-text-muted uppercase"
+					>{t.dashboard.focusTime}</span
+				>
 				<Clock class="h-4 w-4 text-success" />
 			</div>
 			<p class="text-xl font-bold text-success">{stats.totalFocusMinutes}m</p>
 			<p class="mt-0.5 flex items-center gap-1 text-xs text-text-muted">
 				<Trophy class="h-3 w-3 text-accent" />
-				{unlockedAchievements}/{totalAchievements} achievements
+				{unlockedAchievements}/{totalAchievements}
+				{t.dashboard.achievements}
 			</p>
 		</div>
 	</div>
@@ -127,7 +142,9 @@
 			<div class="mb-3 flex items-center justify-between">
 				<div class="flex items-center gap-2">
 					<Clock class="h-4 w-4 text-success" />
-					<h3 class="text-xs font-semibold text-text-primary">Pomodoro — {pomodoroLabel}</h3>
+					<h3 class="text-xs font-semibold text-text-primary">
+						{t.dashboard.pomodoro} — {pomodoroLabel}
+					</h3>
 				</div>
 				<span class="text-sm font-bold text-text-primary">{pomodoroDisplay}</span>
 			</div>
@@ -137,7 +154,7 @@
 					style="width: {pomodoroProgress}%"
 				></div>
 			</div>
-			<p class="mt-1.5 text-xs text-text-muted">{pomodoroProgress}% compconste</p>
+			<p class="mt-1.5 text-xs text-text-muted">{pomodoroProgress}% {t.dashboard.complete}</p>
 		</div>
 	{/if}
 
@@ -145,20 +162,20 @@
 		<div class="border border-surface-3 bg-surface-2 px-4 py-3.5">
 			<div class="mb-3 flex items-center gap-2">
 				<AlertTriangle class="h-4 w-4 text-danger" />
-				<h3 class="text-xs font-semibold text-text-primary">High Priority Tasks</h3>
+				<h3 class="text-xs font-semibold text-text-primary">{t.dashboard.highPriorityTasks}</h3>
 			</div>
 			{#if highPriority === 0}
-				<p class="text-sm text-text-muted">No high priority tasks.</p>
+				<p class="text-sm text-text-muted">{t.dashboard.noHighPriority}</p>
 			{:else}
 				<p class="text-2xl font-bold text-danger">{highPriority}</p>
-				<p class="text-xs text-text-secondary">tasks need attention</p>
+				<p class="text-xs text-text-secondary">{t.dashboard.tasksNeedAttention}</p>
 			{/if}
 		</div>
 
 		<div class="border border-surface-3 bg-surface-2 px-4 py-3.5">
 			<div class="mb-3 flex items-center gap-2">
 				<Trophy class="h-4 w-4 text-accent" />
-				<h3 class="text-xs font-semibold text-text-primary">Achievements</h3>
+				<h3 class="text-xs font-semibold text-text-primary">{t.dashboard.achievementsTitle}</h3>
 			</div>
 			<div class="flex flex-wrap gap-1.5">
 				{#each achievements as a (a.id)}
@@ -166,10 +183,10 @@
 						class="flex items-center gap-1 px-2 py-1 text-xs font-medium {a.unlocked
 							? 'bg-accent/10 text-accent'
 							: 'bg-surface-3 text-text-muted opacity-50'}"
-						title={a.description}
+						title={t.achievements[a.id]?.desc || a.description}
 					>
 						<Trophy class="h-3 w-3" />
-						{a.title}
+						{t.achievements[a.id]?.title || a.title}
 					</div>
 				{/each}
 			</div>
@@ -177,9 +194,9 @@
 	</div>
 
 	<div class="border border-surface-3 bg-surface-2 px-4 py-3.5">
-		<h3 class="mb-3 text-xs font-semibold text-text-primary">Recent Tasks</h3>
+		<h3 class="mb-3 text-xs font-semibold text-text-primary">{t.dashboard.recentTasks}</h3>
 		{#if recentTasks.length === 0}
-			<p class="text-sm text-text-muted">No tasks yet.</p>
+			<p class="text-sm text-text-muted">{t.dashboard.noTasks}</p>
 		{:else}
 			<div class="space-y-1.5">
 				{#each recentTasks as task (task.id)}

@@ -6,10 +6,12 @@
 		getPendingXp,
 		consumePendingXp
 	} from '$lib/stores/gamification.svelte.js';
+	import { getT } from '$lib/stores/i18n.svelte.js';
 	import Trophy from '@lucide/svelte/icons/trophy';
 
 	const achievement = $derived(getLastAchievement());
 	const showing = $derived(isShowingAchievement());
+	const t = $derived(getT());
 	let xpFloats: { id: number; x: number; amount: number }[] = $state([]);
 	let idCounter = 0;
 
@@ -44,10 +46,14 @@
 			</div>
 			<div>
 				<p class="text-[11px] font-semibold tracking-wider text-accent uppercase">
-					Achievement Unlocked
+					{t.gamification.achievementUnlocked}
 				</p>
-				<p class="text-sm font-medium text-text-primary">{achievement.title}</p>
-				<p class="text-xs text-text-secondary">{achievement.description}</p>
+				<p class="text-sm font-medium text-text-primary">
+					{t.achievements[achievement.id]?.title || achievement.title}
+				</p>
+				<p class="text-xs text-text-secondary">
+					{t.achievements[achievement.id]?.desc || achievement.description}
+				</p>
 			</div>
 		</div>
 	</div>
