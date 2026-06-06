@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+
+@theme {
+	--color-surface: #111213;
+	--color-surface-2: #1c1d1f;
+	--color-surface-3: #2a2b2e;
+	--color-surface-4: #38393d;
+	--color-accent: #818cf8;
+	--color-accent-hover: #a5b4fc;
+	--color-accent-subtle: #312e81;
+	--color-accent-soft: #6366f1;
+	--color-success: #4ade80;
+	--color-success-subtle: #14532d;
+	--color-warning: #fbbf24;
+	--color-warning-subtle: #713f12;
+	--color-danger: #f87171;
+	--color-danger-subtle: #7f1d1d;
+	--color-text-primary: #f8fafc;
+	--color-text-secondary: #cbd5e1;
+	--color-text-muted: #94a3b8;
+	--color-priority-high: #f87171;
+	--color-priority-medium: #fbbf24;
+	--color-priority-low: #4ade80;
+	--color-kanban-todo: #60a5fa;
+	--color-kanban-doing: #fbbf24;
+	--color-kanban-done: #4ade80;
+	--radius-xs: 2px;
+	--radius-sm: 4px;
+	--radius-md: 6px;
+	--radius-lg: 8px;
+	--radius-xl: 10px;
+}
+
+.light {
+	--color-surface: #f8fafc;
+	--color-surface-2: #f1f5f9;
+	--color-surface-3: #e2e8f0;
+	--color-surface-4: #cbd5e1;
+	--color-accent: #6366f1;
+	--color-accent-hover: #4f46e5;
+	--color-accent-subtle: #e0e7ff;
+	--color-accent-soft: #818cf8;
+	--color-success: #16a34a;
+	--color-success-subtle: #dcfce7;
+	--color-warning: #d97706;
+	--color-warning-subtle: #fef3c7;
+	--color-danger: #dc2626;
+	--color-danger-subtle: #fee2e2;
+	--color-text-primary: #020617;
+	--color-text-secondary: #1e293b;
+	--color-text-muted: #475569;
+	--color-priority-high: #dc2626;
+	--color-priority-medium: #d97706;
+	--color-priority-low: #16a34a;
+	--color-kanban-todo: #2563eb;
+	--color-kanban-doing: #d97706;
+	--color-kanban-done: #16a34a;
+}
+
+@keyframes achievement-pop {
+	0% {
+		transform: scale(0.85) translateY(12px);
+		opacity: 0;
+	}
+	100% {
+		transform: scale(1) translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes xp-float {
+	0% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	100% {
+		transform: translateY(-48px);
+		opacity: 0;
+	}
+}
+
+body {
+	background: var(--color-surface);
+	color: var(--color-text-primary);
+	font-family:
+		'Inter',
+		system-ui,
+		-apple-system,
+		sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+	width: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--color-surface-4);
+	border-radius: 3px;
+}
