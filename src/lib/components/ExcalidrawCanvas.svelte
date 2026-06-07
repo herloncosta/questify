@@ -10,50 +10,51 @@
 	onMount(() => {
 		let cancelled = false;
 		let root: { unmount: () => void; render: (el: unknown) => void } | null = null;
+		let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
 		(async () => {
 			try {
 				const { createRoot } = await import('react-dom/client');
 				const React = await import('react');
-				const { Tldraw, loadSnapshot, getSnapshot, createTLStore } = await import('tldraw');
-				await import('tldraw/tldraw.css');
+				const { Excalidraw } = await import('@excalidraw/excalidraw');
+				await import('@excalidraw/excalidraw/index.css');
 
 				if (cancelled) return;
 
-				const store = createTLStore({ defaultName: 'Diagram' });
-
-				try {
-					const saved = localStorage.getItem(PERSISTENCE_KEY);
-					if (saved) loadSnapshot(store, JSON.parse(saved));
-				} catch {
-					// no saved data
-				}
-
-				const el = React.createElement(Tldraw, {
-					store,
-					hideUi: false,
+				const el = React.createElement(Excalidraw, {
 					autoFocus: true,
-					onMount: () => {
-						const unsubscribe = store.listen((entry: { source?: string }) => {
-							if (entry.source === 'user') {
-								const snapshot = getSnapshot(store);
-								localStorage.setItem(PERSISTENCE_KEY, JSON.stringify(snapshot));
+					onChange: (elements: unknown, appState: unknown) => {
+						if (saveTimer) clearTimeout(saveTimer);
+						saveTimer = setTimeout(() => {
+							try {
+								localStorage.setItem(PERSISTENCE_KEY, JSON.stringify({ elements, appState }));
+							} catch {
+								// storage full or unavailable
 							}
-						});
-						return () => unsubscribe();
+						}, 500);
+					},
+					initialData: () => {
+						try {
+							const saved = localStorage.getItem(PERSISTENCE_KEY);
+							if (saved) return JSON.parse(saved);
+						} catch {
+							// no saved data
+						}
+						return null;
 					}
 				});
 
 				root = createRoot(container) as unknown as typeof root;
 				root!.render(el);
 			} catch (e) {
-				console.error('TldrawCanvas: failed to mount', e);
+				console.error('ExcalidrawCanvas: failed to mount', e);
 				errorMsg = 'Failed to load diagram editor.';
 			}
 		})();
 
 		return () => {
 			cancelled = true;
+			if (saveTimer) clearTimeout(saveTimer);
 			root?.unmount();
 		};
 	});

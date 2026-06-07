@@ -1,7 +1,7 @@
 <script lang="ts">
-	import TldrawCanvas from './TldrawCanvas.svelte';
+	import ExcalidrawCanvas from './ExcalidrawCanvas.svelte';
 </script>
 
 <div class="flex h-full flex-col">
-	<TldrawCanvas />
+	<ExcalidrawCanvas />
 </div>
