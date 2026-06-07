@@ -12,6 +12,7 @@ Questify é um SPA de produtividade all-in-one que transforma suas tarefas diár
 - **Notas** — Grid responsivo, CRUD via popup e paginação
 - **Dashboard** — Visão geral com estatísticas, XP, tasks recentes e progresso do Pomodoro
 - **Gamificação** — XP por tarefa concluída e sessão Pomodoro, streak diário, achievements e níveis
+- **Diagramas** — Editor de diagramas (Excalidraw) com persistência em IndexedDB
 - **Tema** — Alternância light/dark com persistência em localStorage
 
 ## Stack
@@ -20,7 +21,8 @@ Questify é um SPA de produtividade all-in-one que transforma suas tarefas diár
 - **TypeScript**
 - **Tailwind CSS v4** (sem `tailwind.config.js` — temas via `@theme` no CSS)
 - **@lucide/svelte** para ícones
-- **localStorage** para persistência (sem backend)
+- **localStorage** para persistência de dados de usuário (gamificação, tarefas, notas, tema)
+- **IndexedDB** (via `idb-keyval`) para persistência de diagramas (Excalidraw)
 - **ESLint** flat config + Prettier
 
 ## Estrutura
@@ -42,6 +44,8 @@ src/
 │       ├── TodoList.svelte
 │       ├── Pomodoro.svelte
 │       ├── Kanban.svelte
+│       ├── Diagrams.svelte
+│       ├── ExcalidrawCanvas.svelte
 │       └── Notes.svelte
 ├── routes/
 │   ├── +layout.svelte
