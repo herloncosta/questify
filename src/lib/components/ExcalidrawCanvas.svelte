@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { get, set } from 'idb-keyval';
 
 	const PERSISTENCE_KEY = 'questify-diagram';
 
@@ -14,33 +15,24 @@
 
 		(async () => {
 			try {
-				const { createRoot } = await import('react-dom/client');
-				const React = await import('react');
-				const { Excalidraw } = await import('@excalidraw/excalidraw');
+				const [saved, { createRoot }, React, { Excalidraw }] = await Promise.all([
+					get(PERSISTENCE_KEY) as Promise<Record<string, unknown> | undefined>,
+					import('react-dom/client'),
+					import('react'),
+					import('@excalidraw/excalidraw')
+				]);
 				await import('@excalidraw/excalidraw/index.css');
 
 				if (cancelled) return;
 
 				const el = React.createElement(Excalidraw, {
 					autoFocus: true,
+					initialData: saved as never ?? null,
 					onChange: (elements: unknown, appState: unknown) => {
 						if (saveTimer) clearTimeout(saveTimer);
 						saveTimer = setTimeout(() => {
-							try {
-								localStorage.setItem(PERSISTENCE_KEY, JSON.stringify({ elements, appState }));
-							} catch {
-								// storage full or unavailable
-							}
+							set(PERSISTENCE_KEY, { elements, appState }).catch(() => {});
 						}, 500);
-					},
-					initialData: () => {
-						try {
-							const saved = localStorage.getItem(PERSISTENCE_KEY);
-							if (saved) return JSON.parse(saved);
-						} catch {
-							// no saved data
-						}
-						return null;
 					}
 				});
 
