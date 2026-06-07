@@ -20,6 +20,8 @@
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"@tailwindcss/vite": "^4.2.2",
 		"@types/node": "^24",
+		"@types/react": "^19.2.17",
+		"@types/react-dom": "^19.2.3",
 		"eslint": "^10.4.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.17.0",
@@ -35,6 +37,9 @@
 		"vite": "^8.0.7"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^1.17.0"
+		"@lucide/svelte": "^1.17.0",
+		"react": "^19.2.7",
+		"react-dom": "^19.2.7",
+		"tldraw": "^5.1.0"
 	}
 }

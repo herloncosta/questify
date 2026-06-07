@@ -7,6 +7,7 @@
 	import Pomodoro from '$lib/components/Pomodoro.svelte';
 	import Kanban from '$lib/components/Kanban.svelte';
 	import Notes from '$lib/components/Notes.svelte';
+	import Diagrams from '$lib/components/Diagrams.svelte';
 	import Menu from '@lucide/svelte/icons/menu';
 	import X from '@lucide/svelte/icons/x';
 	import { fly } from 'svelte/transition';
@@ -15,6 +16,22 @@
 	let currentView = $state<View>('dashboard');
 	let mobileOpen = $state(false);
 	let collapsed = $state(false);
+	let isMobile = $state(false);
+
+	$effect(() => {
+		const mq = window.matchMedia('(max-width: 767px)');
+		isMobile = mq.matches;
+		const onChange = (e: MediaQueryListEvent) => {
+			isMobile = e.matches;
+			if (e.matches && currentView === 'diagrams') currentView = 'dashboard';
+		};
+		mq.addEventListener('change', onChange);
+		return () => mq.removeEventListener('change', onChange);
+	});
+
+	$effect(() => {
+		if (isMobile && currentView === 'diagrams') currentView = 'dashboard';
+	});
 </script>
 
 <div class="flex min-h-screen">
@@ -31,16 +48,19 @@
 		{/if}
 	</button>
 
-	<Sidebar bind:current={currentView} bind:mobileOpen bind:collapsed />
+	<Sidebar bind:current={currentView} bind:mobileOpen bind:collapsed {isMobile} />
 	<Gamification />
 
 	<main
-		class="flex-1 px-4 py-16 transition-all duration-200 md:px-8 md:py-8 {collapsed
+		class="flex-1 px-4 transition-all duration-200 md:px-8 {collapsed
 			? 'md:ml-16'
-			: 'md:ml-56'}"
+			: 'md:ml-56'} {currentView === 'diagrams' ? 'flex flex-col py-4 md:py-8' : 'py-16 md:py-8'}"
 	>
 		{#key currentView}
-			<div in:fly={{ x: -40, duration: 350, opacity: 0, easing: cubicInOut }}>
+			<div
+				class={currentView === 'diagrams' ? 'flex flex-1 flex-col' : ''}
+				in:fly={{ x: -40, duration: 350, opacity: 0, easing: cubicInOut }}
+			>
 				{#if currentView === 'dashboard'}
 					<Dashboard />
 				{:else if currentView === 'todo'}
@@ -51,6 +71,8 @@
 					<Kanban />
 				{:else if currentView === 'notes'}
 					<Notes />
+				{:else if currentView === 'diagrams'}
+					<Diagrams />
 				{/if}
 			</div>
 		{/key}

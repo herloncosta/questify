@@ -4,7 +4,8 @@ export const pt = {
 		todo: 'Tarefas',
 		pomodoro: 'Pomodoro',
 		kanban: 'Kanban',
-		notes: 'Notas'
+		notes: 'Notas',
+		diagrams: 'Diagramas'
 	},
 	sidebar: {
 		level: 'Nível',

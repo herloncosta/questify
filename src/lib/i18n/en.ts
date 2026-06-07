@@ -4,7 +4,8 @@ export const en = {
 		todo: 'Tasks',
 		pomodoro: 'Pomodoro',
 		kanban: 'Kanban',
-		notes: 'Notes'
+		notes: 'Notes',
+		diagrams: 'Diagrams'
 	},
 	sidebar: {
 		level: 'Level',

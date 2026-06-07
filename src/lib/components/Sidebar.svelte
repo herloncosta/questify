@@ -6,6 +6,7 @@
 	import Timer from '@lucide/svelte/icons/timer';
 	import Columns3 from '@lucide/svelte/icons/columns-3';
 	import FileText from '@lucide/svelte/icons/file-text';
+	import Shapes from '@lucide/svelte/icons/shapes';
 	import Flame from '@lucide/svelte/icons/flame';
 	import Award from '@lucide/svelte/icons/award';
 	import Sun from '@lucide/svelte/icons/sun';
@@ -20,8 +21,9 @@
 	let {
 		current = $bindable<View>('dashboard'),
 		mobileOpen = $bindable(false),
-		collapsed = $bindable(false)
-	}: { current: View; mobileOpen: boolean; collapsed: boolean } = $props();
+		collapsed = $bindable(false),
+		isMobile = false
+	}: { current: View; mobileOpen: boolean; collapsed: boolean; isMobile: boolean } = $props();
 
 	$effect(() => {
 		try {
@@ -42,13 +44,16 @@
 	const locale = $derived(getLocale());
 	const t = $derived(getT());
 
-	const nav = $derived([
-		{ id: 'dashboard' as const, label: t.nav.dashboard, icon: LayoutDashboard },
-		{ id: 'todo' as const, label: t.nav.todo, icon: ListTodo },
-		{ id: 'pomodoro' as const, label: t.nav.pomodoro, icon: Timer },
-		{ id: 'kanban' as const, label: t.nav.kanban, icon: Columns3 },
-		{ id: 'notes' as const, label: t.nav.notes, icon: FileText }
-	]);
+	const nav = $derived(
+		[
+			{ id: 'dashboard' as const, label: t.nav.dashboard, icon: LayoutDashboard },
+			{ id: 'todo' as const, label: t.nav.todo, icon: ListTodo },
+			{ id: 'pomodoro' as const, label: t.nav.pomodoro, icon: Timer },
+			{ id: 'kanban' as const, label: t.nav.kanban, icon: Columns3 },
+			{ id: 'notes' as const, label: t.nav.notes, icon: FileText },
+			{ id: 'diagrams' as const, label: t.nav.diagrams, icon: Shapes }
+		].filter((item) => !(isMobile && item.id === 'diagrams'))
+	);
 
 	function handleNav(id: View) {
 		current = id;
