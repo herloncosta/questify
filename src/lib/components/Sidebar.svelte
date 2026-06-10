@@ -7,6 +7,7 @@
 	import Columns3 from '@lucide/svelte/icons/columns-3';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Shapes from '@lucide/svelte/icons/shapes';
+	import MapIcon from '@lucide/svelte/icons/map';
 	import Flame from '@lucide/svelte/icons/flame';
 	import Award from '@lucide/svelte/icons/award';
 	import Sun from '@lucide/svelte/icons/sun';
@@ -51,7 +52,8 @@
 			{ id: 'pomodoro' as const, label: t.nav.pomodoro, icon: Timer },
 			{ id: 'kanban' as const, label: t.nav.kanban, icon: Columns3 },
 			{ id: 'notes' as const, label: t.nav.notes, icon: FileText },
-			{ id: 'diagrams' as const, label: t.nav.diagrams, icon: Shapes }
+			{ id: 'diagrams' as const, label: t.nav.diagrams, icon: Shapes },
+			{ id: 'map' as const, label: t.nav.map, icon: MapIcon }
 		].filter((item) => !(isMobile && item.id === 'diagrams'))
 	);
 

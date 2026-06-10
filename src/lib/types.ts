@@ -60,4 +60,4 @@ export interface Note {
 	updatedAt: number;
 }
 
-export type View = 'dashboard' | 'todo' | 'pomodoro' | 'kanban' | 'notes' | 'diagrams';
+export type View = 'dashboard' | 'todo' | 'pomodoro' | 'kanban' | 'notes' | 'diagrams' | 'map';

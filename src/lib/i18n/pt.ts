@@ -5,7 +5,8 @@ export const pt = {
 		pomodoro: 'Pomodoro',
 		kanban: 'Kanban',
 		notes: 'Notas',
-		diagrams: 'Diagramas'
+		diagrams: 'Diagramas',
+		map: 'Mapa'
 	},
 	sidebar: {
 		level: 'Nível',
@@ -120,6 +121,10 @@ export const pt = {
 		noNotes: 'Nenhuma nota ainda.',
 		prev: 'Ant',
 		next: 'Próx'
+	},
+	map: {
+		title: 'Mapa',
+		clearAll: 'Limpar tudo'
 	},
 	gamification: {
 		achievementUnlocked: 'Conquista Desbloqueada'

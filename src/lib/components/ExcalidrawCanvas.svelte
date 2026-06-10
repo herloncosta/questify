@@ -27,7 +27,7 @@
 
 				const el = React.createElement(Excalidraw, {
 					autoFocus: true,
-					initialData: saved as never ?? null,
+					initialData: (saved as never) ?? null,
 					onChange: (elements: unknown, appState: unknown) => {
 						if (saveTimer) clearTimeout(saveTimer);
 						saveTimer = setTimeout(() => {

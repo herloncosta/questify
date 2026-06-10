@@ -5,7 +5,8 @@ export const en = {
 		pomodoro: 'Pomodoro',
 		kanban: 'Kanban',
 		notes: 'Notes',
-		diagrams: 'Diagrams'
+		diagrams: 'Diagrams',
+		map: 'Map'
 	},
 	sidebar: {
 		level: 'Level',
@@ -120,6 +121,10 @@ export const en = {
 		noNotes: 'No notes yet.',
 		prev: 'Prev',
 		next: 'Next'
+	},
+	map: {
+		title: 'Map',
+		clearAll: 'Clear All'
 	},
 	gamification: {
 		achievementUnlocked: 'Achievement Unlocked'

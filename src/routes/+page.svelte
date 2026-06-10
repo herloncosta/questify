@@ -8,6 +8,7 @@
 	import Kanban from '$lib/components/Kanban.svelte';
 	import Notes from '$lib/components/Notes.svelte';
 	import Diagrams from '$lib/components/Diagrams.svelte';
+	import Map from '$lib/components/Map.svelte';
 	import Menu from '@lucide/svelte/icons/menu';
 	import X from '@lucide/svelte/icons/x';
 	import { fly } from 'svelte/transition';
@@ -54,11 +55,13 @@
 	<main
 		class="flex-1 px-4 transition-all duration-200 md:px-8 {collapsed
 			? 'md:ml-16'
-			: 'md:ml-56'} {currentView === 'diagrams' ? 'flex flex-col py-4 md:py-8' : 'py-16 md:py-8'}"
+			: 'md:ml-56'} {currentView === 'diagrams' || currentView === 'map'
+			? 'flex flex-col py-4 md:py-8'
+			: 'py-16 md:py-8'}"
 	>
 		{#key currentView}
 			<div
-				class={currentView === 'diagrams' ? 'flex flex-1 flex-col' : ''}
+				class={currentView === 'diagrams' || currentView === 'map' ? 'flex flex-1 flex-col' : ''}
 				in:fly={{ x: -40, duration: 350, opacity: 0, easing: cubicInOut }}
 			>
 				{#if currentView === 'dashboard'}
@@ -73,6 +76,8 @@
 					<Notes />
 				{:else if currentView === 'diagrams'}
 					<Diagrams />
+				{:else if currentView === 'map'}
+					<Map />
 				{/if}
 			</div>
 		{/key}
